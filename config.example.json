@@ -1,0 +1,22 @@
+{
+  "master_volume": 1.0,
+  "output_devices": [
+    "default"
+  ],
+  "sounds": [
+    {
+      "id": "airhorn-01",
+      "name": "MLG Airhorn",
+      "file": "airhorn.wav",
+      "hotkey": "Ctrl+Shift+A",
+      "volume": 0.8
+    },
+    {
+      "id": "bruh-01",
+      "name": "Bruh Sound Effect",
+      "file": "bruh.mp3",
+      "hotkey": null,
+      "volume": 1.0
+    }
+  ]
+}

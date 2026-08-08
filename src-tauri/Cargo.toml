@@ -1,0 +1,25 @@
+[package]
+name = "wavekey"
+version = "0.1.0"
+description = "Lightweight desktop soundboard"
+authors = ["odqin"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.0.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.0.0", features = ["tray-icon"] }
+tauri-plugin-dialog = "2.0.0"
+tauri-plugin-autostart = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rodio = "0.19.0"
+global-hotkey = "0.5.2"
+symphonia = { version = "0.5.4", features = ["all"] }
+hound = "3.5"
+reqwest = { version = "0.11", features = ["stream", "rustls-tls", "blocking", "json"] }
+tokio = { version = "1", features = ["full"] }
+[features]
+default = [ "custom-protocol" ]
+custom-protocol = [ "tauri/custom-protocol" ]
