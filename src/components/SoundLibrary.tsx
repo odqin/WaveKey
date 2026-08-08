@@ -73,6 +73,7 @@ export function SoundLibrary({ sounds, config, onConfigChange }: Props) {
                                     id: sound.id,
                                     path: sound.file,
                                     targetDevices: config.output_devices,
+                                    allowOverlap: config.allow_overlap,
                                 })
                             }
                         >
