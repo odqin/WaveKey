@@ -23,51 +23,21 @@ interface Props {
 export function SoundLibrary({ sounds, config, onConfigChange }: Props) {
     if (sounds.length === 0) {
         return (
-            <div style={{
-                padding: '40px',
-                textAlign: 'center',
-                background: '#f8f9fa',
-                borderRadius: '8px',
-                color: '#6c757d',
-                marginTop: '10px',
-            }}>
+            <div className="sound-empty">
                 No sounds yet. Drag &amp; drop an audio file here, or click <strong>+ Add Sound</strong>.
             </div>
         );
     }
 
     return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '15px',
-            marginTop: '10px',
-        }}>
+        <div className="sound-grid">
             {sounds.map(sound => (
-                <div
-                    key={sound.id}
-                    style={{
-                        border: '1px solid #dee2e6',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        background: 'white',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                    }}
-                >
-                    <strong style={{ fontSize: '1.05em' }}>{sound.name}</strong>
+                <div key={sound.id} className="sound-card">
+                    <div className="sound-card__name">{sound.name}</div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="sound-card__actions">
                         <button
-                            style={{
-                                padding: '7px 14px',
-                                backgroundColor: '#28a745',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                            }}
+                            className="btn btn--success"
                             onClick={() =>
                                 invoke('play_sound', {
                                     id: sound.id,
@@ -82,7 +52,7 @@ export function SoundLibrary({ sounds, config, onConfigChange }: Props) {
 
                         <HotkeyRecorder
                             soundId={sound.id}
-                            currentHotkey={sound.hotkey}
+                            currentHotkey={sound.hotkey ?? null}
                             config={config}
                             onHotkeyChange={onConfigChange}
                         />

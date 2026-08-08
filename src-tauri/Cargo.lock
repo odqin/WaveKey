@@ -4963,7 +4963,7 @@ dependencies = [
 
 [[package]]
 name = "wavekey"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "global-hotkey",
  "hound",

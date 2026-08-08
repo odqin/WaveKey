@@ -73,13 +73,18 @@ export function HotkeyRecorder({ soundId, currentHotkey, config, onHotkeyChange 
     }, [recording, soundId, config, onHotkeyChange]);
 
     return (
-        <div style={{ display: 'inline-block', marginLeft: '10px' }}>
-            <button onClick={() => setRecording(true)}>
-                {recording ? 'Listening… press combo' : 'Set Hotkey'}
+        <div className="hotkey-recorder">
+            <button
+                className={`hotkey-recorder__btn${recording ? ' hotkey-recorder__btn--recording' : ''}`}
+                onClick={() => setRecording(true)}
+            >
+                {recording ? '● Listening…' : 'Set Hotkey'}
             </button>
-            <span style={{ marginLeft: '8px', color: '#6c757d', fontSize: '0.85em' }}>
-                {currentHotkey ?? 'None'}
-            </span>
+            {currentHotkey && (
+                <span className="hotkey-recorder__chip">
+                    {currentHotkey}
+                </span>
+            )}
         </div>
     );
 }

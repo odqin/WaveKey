@@ -97,7 +97,11 @@ export default function App() {
     }
 
     if (!config) {
-        return <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>Loading…</div>;
+        return (
+            <div className="app-shell" style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <span className="text-secondary">Loading…</span>
+            </div>
+        );
     }
 
     if (view === 'settings') {
@@ -111,57 +115,62 @@ export default function App() {
     }
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'sans-serif', height: '100vh', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+        <div className="app-shell">
 
             {/* Update Banner */}
             {updateInfo && (
-                <div style={{ background: '#d1ecf1', color: '#0c5460', padding: '10px 15px', borderRadius: '6px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="update-banner">
                     <div>
-                        <strong>Update Available:</strong> v{updateInfo.version}
+                        <strong>Update available:</strong> v{updateInfo.version}
                     </div>
-                    <div>
-                        <a href={updateInfo.release_url} target="_blank" rel="noreferrer" style={{ background: '#0c5460', color: 'white', padding: '5px 10px', borderRadius: '4px', textDecoration: 'none', fontSize: '0.9em', marginRight: '10px' }}>Download</a>
-                        <button onClick={() => setUpdateInfo(null)} style={{ background: 'transparent', border: 'none', color: '#0c5460', cursor: 'pointer', fontSize: '1.2em' }}>&times;</button>
+                    <div className="update-banner__actions">
+                        <a
+                            href={updateInfo.release_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn--accent-outline"
+                        >
+                            Download
+                        </a>
+                        <button
+                            className="btn--clear"
+                            onClick={() => setUpdateInfo(null)}
+                            title="Dismiss"
+                        >
+                            ✕
+                        </button>
                     </div>
                 </div>
             )}
 
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h1 style={{ margin: 0, fontSize: '1.4em' }}>WaveKey</h1>
+            <div className="header">
+                <span className="header__title">WaveKey</span>
                 <button
+                    className="btn--icon"
                     title="Settings"
                     onClick={() => setView('settings')}
-                    style={{ background: 'none', border: '1px solid #dee2e6', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer', fontSize: '1.1em' }}
                 >
                     ⚙️
                 </button>
             </div>
 
-            {/* Import toolbar */}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
+            {/* Toolbar */}
+            <div className="toolbar">
                 {/* YouTube import */}
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#f8f9fa', padding: '6px 10px', borderRadius: '6px', border: '1px solid #dee2e6' }}>
+                <div className="yt-input-group">
                     <input
                         type="text"
+                        className="input"
                         placeholder="Paste YouTube URL…"
                         value={ytUrl}
                         onChange={e => setYtUrl(e.target.value)}
-                        style={{ padding: '5px 8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
+                        style={{ minWidth: '200px' }}
                     />
                     <button
+                        className="btn btn--danger"
                         onClick={handleYouTubeImport}
                         disabled={ytImporting || !ytUrl}
-                        style={{
-                            padding: '6px 14px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: (ytImporting || !ytUrl) ? 'not-allowed' : 'pointer',
-                            fontWeight: 'bold',
-                            opacity: (ytImporting || !ytUrl) ? 0.65 : 1,
-                        }}
                     >
                         {ytImporting ? 'Downloading…' : 'YT Import'}
                     </button>
@@ -169,37 +178,21 @@ export default function App() {
 
                 {/* Local file import */}
                 <button
+                    className="btn btn--accent"
                     onClick={handleAddSound}
                     disabled={importing}
-                    style={{
-                        padding: '8px 18px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: importing ? 'not-allowed' : 'pointer',
-                        opacity: importing ? 0.65 : 1,
-                    }}
                 >
                     {importing ? 'Importing…' : '+ Add Sound'}
                 </button>
 
-                {/* Stop All button */}
+                {/* Stop All */}
                 <button
+                    className="btn btn--danger"
                     onClick={() => invoke('stop_all_audio')}
-                    style={{
-                        padding: '8px 18px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        marginLeft: 'auto', // Pushes it to the right
-                    }}
                     title="Stop all playing sounds"
+                    style={{ marginLeft: 'auto' }}
                 >
-                    ⏹️ Stop All
+                    ⏹ Stop All
                 </button>
             </div>
 
