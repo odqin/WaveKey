@@ -1,7 +1,6 @@
 target/
 node_modules/
 dist/
-docs/
 sounds/
 config.json
 .env

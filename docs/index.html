@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaveKey — Every hotkey, a sound.</title>
+  <meta name="description" content="A lightweight cross-platform soundboard with global hotkeys, virtual mic routing, and YouTube import. Built with Tauri + Rust." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css" />
+</head>
+<body>
+
+  <div class="page">
+
+    <nav class="navbar">
+      <div class="navbar__brand">
+        <div class="navbar__logo"><i class="ti ti-wave-square"></i></div>
+        <span class="navbar__name">WaveKey</span>
+      </div>
+      <div class="navbar__actions">
+        <span class="navbar__version" id="nav-version">v...</span>
+        <a class="navbar__github" href="https://github.com/odqin/WaveKey" target="_blank" rel="noopener">
+          <i class="ti ti-brand-github"></i>
+        </a>
+      </div>
+    </nav>
+
+    <main class="hero">
+      <div class="hero__text">
+        <span class="hero__eyebrow">Cross-platform soundboard</span>
+        <h1 class="hero__title">Every hotkey,<br />a sound.</h1>
+        <p class="hero__subtitle">
+          Bind clips to global hotkeys, route them to a virtual mic or your
+          headset, and pull sounds straight from YouTube. Lightweight,
+          cross-platform, built with Rust.
+        </p>
+
+        <div class="hero__cta">
+          <div class="hero__buttons">
+            <a class="btn btn--primary" id="primary-download" href="https://github.com/odqin/WaveKey/releases" target="_blank" rel="noopener">
+              <i class="ti ti-download" id="primary-download-icon"></i>
+              <span id="primary-download-label">View Releases</span>
+            </a>
+            <a class="btn btn--secondary" href="https://github.com/odqin/WaveKey" target="_blank" rel="noopener">
+              <i class="ti ti-brand-github"></i> View on GitHub
+            </a>
+          </div>
+          <div class="hero__secondary-links" id="secondary-links">
+            <!-- filled in by script.js -->
+          </div>
+        </div>
+      </div>
+
+      <div class="mockup">
+        <div class="mockup__layer mockup__layer--back"></div>
+        <div class="mockup__layer mockup__layer--mid"></div>
+
+        <div class="mockup__window">
+          <div class="mockup__titlebar">
+            <span>WaveKey</span>
+            <div class="mockup__titlebar-controls">
+              <i class="ti ti-chevron-down"></i>
+              <i class="ti ti-chevron-up"></i>
+              <i class="ti ti-x"></i>
+            </div>
+          </div>
+
+          <div class="mockup__body">
+            <div class="mockup__header">
+              <span>WaveKey</span>
+              <div class="mockup__settings-btn"><i class="ti ti-settings"></i></div>
+            </div>
+
+            <div class="mockup__toolbar">
+              <div class="mockup__url-input">Paste YouTube URL...</div>
+              <div class="mockup__btn mockup__btn--accent">YT Import</div>
+              <div class="mockup__btn mockup__btn--accent">+ Add sound</div>
+              <div class="mockup__toolbar-spacer"></div>
+              <div class="mockup__btn mockup__btn--danger">Stop all</div>
+            </div>
+
+            <div class="mockup__grid">
+              <div class="mockup__tile" style="--tile-color:#FF9F0A">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">Horn</span>
+              </div>
+
+              <div class="mockup__tile mockup__tile--playing" style="--tile-color:#5E5CE6">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave mockup__wave--live" viewBox="0 0 16 16" fill="none">
+                    <rect class="bar bar--1" x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/>
+                    <rect class="bar bar--2" x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/>
+                    <rect class="bar bar--3" x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/>
+                    <rect class="bar bar--4" x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/>
+                  </svg>
+                </div>
+                <span class="mockup__tile-name">Buhh</span>
+                <div class="mockup__hotkey"><span>Ctrl</span><span>Shift</span><span>B</span></div>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#FF375F">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">Roda</span>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#FF9F0A">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">Batman</span>
+                <div class="mockup__hotkey"><span>Ctrl</span><span>Shift</span><span>N</span></div>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#BF5AF2">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">Russ</span>
+                <div class="mockup__hotkey"><span>Ctrl</span><span>Shift</span><span>J</span></div>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#FFD60A">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">Click V2</span>
+                <div class="mockup__hotkey"><span>Ctrl</span><span>Shift</span><span>End</span></div>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#FF375F">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">YAD</span>
+              </div>
+
+              <div class="mockup__tile" style="--tile-color:#FF9F0A">
+                <div class="mockup__chip">
+                  <svg class="mockup__wave" viewBox="0 0 16 16" fill="none"><rect x="0.5" y="6" width="2.2" height="4" rx="1.1" fill="currentColor"/><rect x="4.7" y="3" width="2.2" height="10" rx="1.1" fill="currentColor"/><rect x="8.9" y="1" width="2.2" height="14" rx="1.1" fill="currentColor"/><rect x="13.1" y="4.5" width="2.2" height="7" rx="1.1" fill="currentColor"/></svg>
+                </div>
+                <span class="mockup__tile-name">IDK</span>
+              </div>
+            </div>
+
+            <div class="mockup__transport">
+              <div class="mockup__transport-info">
+                <div class="mockup__transport-label">Now playing</div>
+                <div class="mockup__transport-name">Buhh</div>
+              </div>
+              <div class="mockup__transport-volume">
+                <span>Vol</span>
+                <div class="mockup__transport-track">
+                  <div class="mockup__transport-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>&copy; 2026 WaveKey</span>
+      <a href="https://github.com/odqin/WaveKey" target="_blank" rel="noopener">
+        <i class="ti ti-brand-github"></i> GitHub
+      </a>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

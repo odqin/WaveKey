@@ -1,0 +1,446 @@
+:root {
+  --bg-base: #0D0D0F;
+  --surface-1: #1C1C1F;
+  --surface-2: #232326;
+  --border-subtle: rgba(255,255,255,0.08);
+  --text-primary: #F5F5F7;
+  --text-secondary: #8E8E93;
+  --text-tertiary: #636366;
+  --accent: #7C3AED;
+  --danger: #FF453A;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(640px circle at 82% 34%, rgba(124, 58, 237, 0.16), transparent 60%),
+    radial-gradient(520px circle at 6% 78%, rgba(94, 92, 230, 0.09), transparent 55%);
+  pointer-events: none;
+}
+
+.page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 64px);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-bottom: 0.5px solid var(--border-subtle);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.navbar__brand { display: flex; align-items: center; gap: 10px; }
+.navbar__logo {
+  width: 26px; height: 26px; border-radius: 8px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 13px; flex-shrink: 0;
+}
+.navbar__name { font-size: 15px; font-weight: 600; }
+.navbar__actions { display: flex; align-items: center; gap: 14px; }
+.navbar__version {
+  font-size: 11px; color: var(--text-secondary); background: var(--surface-1);
+  border: 0.5px solid var(--border-subtle); border-radius: 20px; padding: 4px 10px;
+}
+.navbar__github {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--surface-1);
+  border: 0.5px solid var(--border-subtle); display: flex; align-items: center;
+  justify-content: center; color: var(--text-primary); text-decoration: none;
+  transition: background 0.15s ease;
+}
+.navbar__github:hover { background: var(--surface-2); }
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 56px;
+  align-items: center;
+  flex: 1;
+  padding: clamp(40px, 8vw, 72px) 0;
+}
+.hero__eyebrow {
+  font-size: 13px; letter-spacing: 2px; color: var(--text-secondary);
+  text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 24px;
+}
+.hero__title {
+  font-size: clamp(36px, 6vw, 60px); font-weight: 700; line-height: 1.1; margin-bottom: 24px;
+  background: linear-gradient(135deg, #F5F5F7 0%, #C4B5FD 55%, #7C3AED 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero__subtitle {
+  font-size: 17px; color: var(--text-secondary); line-height: 1.6;
+  max-width: 420px; margin-bottom: 40px;
+}
+.hero__buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+.btn {
+  border-radius: 12px; padding: 16px 26px; font-size: 16px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px; text-decoration: none;
+  cursor: pointer; border: none;
+  transition: filter 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.btn--primary { background: var(--accent); color: #fff; }
+.btn--primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn--secondary { background: transparent; color: var(--text-primary); border: 1px solid rgba(255,255,255,0.15); }
+.btn--secondary:hover { background: var(--surface-1); transform: translateY(-1px); }
+.hero__secondary-links { font-size: 13px; color: var(--text-tertiary); }
+.hero__secondary-links a { color: var(--text-tertiary); text-decoration: none; }
+.hero__secondary-links a:hover { color: var(--text-secondary); }
+
+/* App mockup */
+.mockup {
+  position: relative;
+  padding: 20px 0 0 20px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  animation-name: fadeInUp, idleFloat;
+  animation-duration: 0.6s, 4s;
+  animation-timing-function: ease, ease-in-out;
+  animation-delay: 0.3s, 0.3s;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards, none;
+  opacity: 0;
+}
+
+.mockup__window,
+.mockup__layer {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Default look: ambient glow always on. Hover adds lift + intensifies it. */
+.mockup__window {
+  box-shadow: 0 32px 90px rgba(124, 58, 237, 0.22);
+}
+.mockup .mockup__window {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow: 0 36px 100px rgba(124, 58, 237, 0.32);
+}
+.mockup:hover .mockup__layer--back { transform: rotate(-4deg) translate(-6px, 6px); }
+.mockup:hover .mockup__layer--mid { transform: rotate(3deg) translate(6px, -3px); }
+
+.mockup__layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #18181e;
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 14px;
+}
+.mockup__layer--back { transform: rotate(-2deg); opacity: 0.6; }
+.mockup__layer--mid { top: 8px; left: 8px; background: #151519; transform: rotate(1deg); opacity: 0.8; }
+
+.mockup__window {
+  position: relative;
+  background: #14141a;
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+}
+
+.mockup__titlebar {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-bottom: 0.5px solid var(--border-subtle);
+  font-size: 13px;
+  color: #c8c8cc;
+}
+.mockup__titlebar-controls {
+  position: absolute;
+  right: 14px;
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #5a5a5e;
+}
+
+.mockup__body { padding: 18px 18px 14px; }
+
+.mockup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.mockup__settings-btn {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.mockup__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mockup__url-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mockup__btn {
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+.mockup__btn--accent { background: var(--accent); }
+.mockup__btn--danger { background: var(--danger); }
+.mockup__toolbar-spacer { flex: 1; }
+
+/* minmax(0, 1fr) instead of plain 1fr: without the explicit 0 minimum,
+   a grid track's default min-width is "auto", which lets a tile's own
+   content (long names, hotkey badges) force that column wider than its
+   fair 1fr share. minmax(0, 1fr) clamps that, guaranteeing all 4 columns
+   are always mathematically identical regardless of content. This also
+   means no per-tile width should ever be set directly on .mockup__tile —
+   fixed pixel widths fight the grid instead of trusting it, and are what
+   caused the mockup to overflow its window. */
+.mockup__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+/* justify-content: flex-start (not flex-end) so the chip + name always sit
+   at the exact same fixed position from the top of the tile, whether or
+   not a hotkey row follows. The hotkey row (if present) just adds on
+   below — it never pulls the chip/name up or down. */
+.mockup__tile {
+  background: var(--surface-2);
+  border: 1.5px solid var(--tile-color);
+  border-radius: 11px;
+  padding: 10px 10px 8px;
+  position: relative;
+  height: 92px;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.mockup:hover .mockup__tile--playing {
+  box-shadow: 0 0 0 1px var(--tile-color), 0 0 22px -4px var(--tile-color);
+  animation: pulseGlow 2.2s ease-in-out infinite;
+}
+
+.mockup__chip {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--tile-color);
+  color: #14141a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.mockup__wave { width: 13px; height: 13px; }
+.mockup__wave .bar { transform-origin: center; }
+
+.mockup:hover .mockup__wave--live .bar--1 { animation: wave-pulse 0.9s ease-in-out infinite; animation-delay: -0.4s; }
+.mockup:hover .mockup__wave--live .bar--2 { animation: wave-pulse 0.9s ease-in-out infinite; animation-delay: -0.2s; }
+.mockup:hover .mockup__wave--live .bar--3 { animation: wave-pulse 0.9s ease-in-out infinite; animation-delay: -0.6s; }
+.mockup:hover .mockup__wave--live .bar--4 { animation: wave-pulse 0.9s ease-in-out infinite; animation-delay: -0.1s; }
+
+@keyframes wave-pulse {
+  0%, 100% { transform: scaleY(0.55); }
+  50%      { transform: scaleY(1); }
+}
+
+.mockup__tile-name {
+  font-size: 11px;
+  font-weight: 600;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Hotkey row now sits at a fixed distance below the name (margin-top),
+   rather than being pulled to the bottom of the tile — this keeps the
+   chip+name block's position 100% independent of whether this exists. */
+.mockup__hotkey {
+  display: flex;
+  gap: 2px;
+  margin-top: 6px;
+}
+.mockup__hotkey span {
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-family: ui-monospace, monospace;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.mockup__transport {
+  background: rgba(28,28,31,0.9);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mockup__transport-info { min-width: 0; }
+.mockup__transport-label {
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+.mockup__transport-name {
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mockup__transport-name--idle { color: var(--text-tertiary); font-style: italic; }
+.mockup__transport-name--live { display: none; color: var(--text-primary); font-weight: 500; }
+.mockup:hover .mockup__transport-name--idle { display: none; }
+.mockup:hover .mockup__transport-name--live { display: block; }
+
+.mockup__transport-volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+.mockup__transport-track {
+  flex: 1;
+  height: 3px;
+  background: var(--surface-2);
+  border-radius: 2px;
+  position: relative;
+}
+.mockup__transport-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.mockup:hover .mockup__transport-fill { width: 74%; }
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 0.5px solid var(--border-subtle);
+  padding: 24px 0;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.footer a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.footer a:hover { color: var(--text-primary); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero__eyebrow, .hero__title, .hero__subtitle, .hero__cta {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+.hero__eyebrow { animation-delay: 0.05s; }
+.hero__title { animation-delay: 0.15s; }
+.hero__subtitle { animation-delay: 0.25s; }
+.hero__cta { animation-delay: 0.35s; }
+
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--tile-color), 0 0 10px -4px var(--tile-color); }
+  50%      { box-shadow: 0 0 0 1px var(--tile-color), 0 0 24px -2px var(--tile-color); }
+}
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+  .hero__text { order: 1; }
+  .mockup { order: 2; }
+  .hero__subtitle { margin-left: auto; margin-right: auto; }
+  .hero__buttons { justify-content: center; }
+  .hero__secondary-links { text-align: center; }
+}
+
+@media (max-width: 460px) {
+  .navbar { justify-content: center; text-align: center; }
+  .hero__buttons { flex-direction: column; align-items: stretch; }
+  .btn { justify-content: center; }
+  .mockup__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mockup__toolbar { flex-wrap: wrap; }
+  .mockup__url-input { flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mockup,
+  .mockup__tile--playing,
+  .mockup__wave--live .bar,
+  .hero__eyebrow, .hero__title, .hero__subtitle, .hero__cta {
+    animation: none !important;
+    opacity: 1;
+  }
+}

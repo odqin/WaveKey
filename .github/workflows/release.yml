@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: sync version from tag
+        run: node scripts/sync-version.mjs
+
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -51,6 +54,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: sync version from tag
+        run: node scripts/sync-version.mjs
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
