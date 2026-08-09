@@ -2,6 +2,7 @@ use global_hotkey::{hotkey::HotKey, GlobalHotKeyEvent, GlobalHotKeyManager};
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::Mutex;
+use tauri::Emitter;
 use tauri::{AppHandle, Manager};
 
 use crate::audio;
@@ -35,14 +36,20 @@ pub fn spawn_hotkey_listener(app: AppHandle) {
                 let id_map = state.id_to_sound.lock().unwrap();
                 
                 if let Some(sound_id) = id_map.get(&event.id) {
+                        eprintln!("Hotkey fired: event.id={}, sound_id={}", event.id, sound_id); // TEMP DEBUG
+
                     if sound_id == "__STOP_ALL__" {
+                        let _ = app.emit("stop_all", ());
                         let _ = audio::stop_all_audio(app.clone());
                     } else {
+                            eprintln!("Hotkey event fired for unmapped id: {}", event.id); // TEMP DEBUG
+
                         // Fetch the file path from config. 
                         // (config.rs owns config logic, so we call its public function)
                         let cfg = config::get_config(app.clone());
                         if let Some(sound) = cfg.sounds.iter().find(|s| s.id == *sound_id) {
-                            let _ = audio::play_or_stop_sound_internal(&app, sound.id.clone(), sound.file.clone(), cfg.output_devices.clone(), cfg.allow_overlap);
+                            let _ = app.emit("sound_played", sound.id.clone());
+                            let _ = audio::play_or_stop_sound_internal(&app, sound.id.clone(), sound.file.clone(), cfg.output_devices.clone(), cfg.allow_overlap, cfg.master_volume * sound.volume);
                         }
                     }
                 }

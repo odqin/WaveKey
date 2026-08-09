@@ -1,41 +1,34 @@
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { Config } from '../types/config';
-
+import { HotkeyKeycapInput } from '../components/HotkeyKeycapInput';
+import { getVersion } from '@tauri-apps/api/app';
+import { open as shellOpen } from '@tauri-apps/plugin-shell';
 interface Props {
-    /** Current config to display and mutate. */
     config: Config;
-    /**
-     * Persists an updated config and syncs state up through the `useConfig`
-     * hook. SettingsScreen never writes config directly — it delegates here.
-     */
     onConfigChange: (updated: Config) => Promise<void>;
-    /** Navigates back to the main sound library view. */
     onBack: () => void;
 }
 
-/**
- * `SettingsScreen` renders the full settings panel. All mutations go through
- * `onConfigChange`, which calls `useConfig`'s `saveConfig`. The screen never
- * calls `save_config` directly — one function, one home.
- */
 export function SettingsScreen({ config, onConfigChange, onBack }: Props) {
     const [outputDevices, setOutputDevices] = useState<string[]>([]);
     const [autostartBusy, setAutostartBusy] = useState(false);
+    const [deviceDropdownOpen, setDeviceDropdownOpen] = useState(false);
+const [appVersion, setAppVersion] = useState('');
 
-    // Load platform output devices on mount
+useEffect(() => {
+    getVersion().then(setAppVersion).catch(() => setAppVersion('—'));
+}, []);
     useEffect(() => {
         invoke<string[]>('get_output_devices')
             .then(setOutputDevices)
             .catch(err => console.error('Failed to fetch output devices:', err));
     }, []);
 
-    /** Updates a single field in config and persists immediately. */
     async function update<K extends keyof Config>(key: K, value: Config[K]) {
         await onConfigChange({ ...config, [key]: value });
     }
 
-    /** Toggle autostart — must also call the plugin's enable/disable command. */
     async function handleAutostartToggle(enabled: boolean) {
         setAutostartBusy(true);
         try {
@@ -52,171 +45,165 @@ export function SettingsScreen({ config, onConfigChange, onBack }: Props) {
         }
     }
 
+    const currentDevice = config.output_devices[0] ?? 'default';
+
     return (
-        <div className="settings-shell">
-            {/* Header */}
-            <div className="settings-header">
-                <button className="btn btn--ghost" onClick={onBack}>
-                    ← Back
-                </button>
-                <h1 className="settings-header__title">Settings</h1>
-            </div>
+        <div className="app-shell">
+            <div className="main-container">
+                <div className="settings-header-container">
+                    <button className="settings-back-btn" onClick={onBack}>
+                        <i className="ti ti-chevron-left"></i>
+                        <span>Back</span>
+                    </button>
+                    <span className="settings-title">Settings</span>
+                </div>
 
-            {/* Audio Section */}
-            <div className="settings-section">
-                <div className="settings-section__label">Audio</div>
+                <div className="settings-section-title">Audio</div>
                 <div className="settings-group">
-
-                    <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="master-volume">
-                            Master Volume
-                        </label>
-                        <div className="settings-row__control">
-                            <input
-                                id="master-volume"
-                                type="range"
-                                className="range"
-                                min={0}
-                                max={1}
-                                step={0.01}
-                                value={config.master_volume}
-                                onChange={e => update('master_volume', parseFloat(e.target.value))}
-                            />
-                            <span className="volume-value">
-                                {Math.round(config.master_volume * 100)}%
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="output-device">
-                            Output Device
-                        </label>
-                        <div className="settings-row__control">
-                            <select
-                                id="output-device"
-                                className="select"
-                                value={config.output_devices[0] ?? 'default'}
-                                onChange={e => update('output_devices', [e.target.value])}
+                    <div className="settings-row" style={{ borderBottom: 'none' }}>
+                        <span className="settings-label">Output device</span>
+                        
+                        {/* Custom Dropdown */}
+                        <div style={{ position: 'relative' }}>
+                            <div
+                                className="custom-dropdown-trigger"
+                                onClick={() => setDeviceDropdownOpen(!deviceDropdownOpen)}
                             >
-                                {outputDevices.map(d => (
-                                    <option key={d} value={d}>{d}</option>
-                                ))}
-                            </select>
+                                <span>{currentDevice}</span>
+                                <i className="ti ti-chevron-down"></i>
+                            </div>
+                            
+                            {deviceDropdownOpen && (
+                                <>
+                                    <div style={{ position: 'fixed', inset: 0, zIndex: 90 }} onClick={() => setDeviceDropdownOpen(false)}></div>
+                                    <div className="ctx-menu" style={{ position: 'absolute', top: 'calc(100% + 4px)', right: 0, zIndex: 100, minWidth: '100%', animation: 'none', background: 'var(--surface-1)' }}>
+                                        {outputDevices.map(d => (
+                                            <button
+                                                key={d}
+                                                className="ctx-menu__item"
+                                                style={{ padding: '6px 10px', fontSize: '12px' }}
+                                                onClick={() => {
+                                                    update('output_devices', [d]);
+                                                    setDeviceDropdownOpen(false);
+                                                }}
+                                            >
+                                                {d}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
-
                 </div>
-            </div>
 
-            {/* Behaviour Section */}
-            <div className="settings-section">
-                <div className="settings-section__label">Behaviour</div>
+                <div className="settings-section-title">Behaviour</div>
                 <div className="settings-group">
-
                     <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="minimize-to-tray">
-                            Minimize to tray on close
-                        </label>
-                        <div className="settings-row__control">
-                            <label className="toggle">
-                                <input
-                                    id="minimize-to-tray"
-                                    type="checkbox"
-                                    checked={config.minimize_to_tray}
-                                    onChange={e => update('minimize_to_tray', e.target.checked)}
-                                />
-                                <span className="toggle__track" />
-                                <span className="toggle__thumb" />
-                            </label>
+                        <span className="settings-label">Minimize to tray on close</span>
+                        <div
+                            className={`custom-toggle ${config.minimize_to_tray ? 'on' : 'off'}`}
+                            onClick={() => update('minimize_to_tray', !config.minimize_to_tray)}
+                        >
+                            <div className="custom-toggle-thumb"></div>
                         </div>
                     </div>
 
                     <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="autostart">
-                            Launch on login
-                            {autostartBusy && (
-                                <span className="settings-row__sublabel">saving…</span>
-                            )}
-                        </label>
-                        <div className="settings-row__control">
-                            <label className="toggle">
-                                <input
-                                    id="autostart"
-                                    type="checkbox"
-                                    checked={config.autostart}
-                                    disabled={autostartBusy}
-                                    onChange={e => handleAutostartToggle(e.target.checked)}
-                                />
-                                <span className="toggle__track" />
-                                <span className="toggle__thumb" />
-                            </label>
+                        <span className="settings-label">Launch on login {autostartBusy && <span style={{ opacity: 0.5, fontSize: '11px', marginLeft: '6px' }}>(saving...)</span>}</span>
+                        <div
+                            className={`custom-toggle ${config.autostart ? 'on' : 'off'}`}
+                            onClick={() => {
+                                if (!autostartBusy) handleAutostartToggle(!config.autostart);
+                            }}
+                            style={{ opacity: autostartBusy ? 0.5 : 1, cursor: autostartBusy ? 'not-allowed' : 'pointer' }}
+                        >
+                            <div className="custom-toggle-thumb"></div>
                         </div>
                     </div>
 
                     <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="allow-overlap">
-                            Allow overlapping sounds
-                        </label>
-                        <div className="settings-row__control">
-                            <label className="toggle">
-                                <input
-                                    id="allow-overlap"
-                                    type="checkbox"
-                                    checked={config.allow_overlap}
-                                    onChange={e => update('allow_overlap', e.target.checked)}
-                                />
-                                <span className="toggle__track" />
-                                <span className="toggle__thumb" />
-                            </label>
+                        <span className="settings-label">Allow overlapping sounds</span>
+                        <div
+                            className={`custom-toggle ${config.allow_overlap ? 'on' : 'off'}`}
+                            onClick={() => update('allow_overlap', !config.allow_overlap)}
+                        >
+                            <div className="custom-toggle-thumb"></div>
                         </div>
                     </div>
 
-                    <div className="settings-row">
-                        <label className="settings-row__label" htmlFor="stop-all-hotkey">
-                            Stop All Sounds Hotkey
-                        </label>
-                        <div className="settings-row__control">
-                            <input
-                                id="stop-all-hotkey"
-                                type="text"
-                                className="input"
-                                readOnly
-                                placeholder="Click, then press keys…"
-                                value={config.stop_all_hotkey ?? ''}
-                                style={{ minWidth: '160px', caretColor: 'transparent', cursor: 'pointer' }}
-                                onKeyDown={e => {
-                                    e.preventDefault();
-                                    const parts: string[] = [];
-                                    if (e.ctrlKey) parts.push('Ctrl');
-                                    if (e.altKey) parts.push('Alt');
-                                    if (e.shiftKey) parts.push('Shift');
-                                    if (e.metaKey) parts.push('Meta');
-                                    const key = e.key;
-                                    if (!['Control', 'Alt', 'Shift', 'Meta'].includes(key)) {
-                                        parts.push(key.toUpperCase());
-                                    }
-                                    if (parts.length > 1) {
-                                        update('stop_all_hotkey', parts.join('+'));
-                                    }
-                                }}
-                                onFocus={e => { if (!config.stop_all_hotkey) e.target.placeholder = 'Press combo…'; }}
-                                onBlur={e => { e.target.placeholder = 'Click, then press keys…'; }}
-                            />
-                            {config.stop_all_hotkey && (
-                                <button
-                                    className="btn--clear"
-                                    onClick={() => update('stop_all_hotkey', null)}
-                                    title="Clear hotkey"
-                                >
-                                    ✕
-                                </button>
-                            )}
+                   <div className="settings-row" style={{ borderBottom: 'none' }}>
+                    <span className="settings-label">Stop all sounds hotkey</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                         <HotkeyKeycapInput
+                      value={config.stop_all_hotkey}
+                      onRecord={async (combo) => {
+                      try {
+                    await invoke('register_hotkey', { soundId: '__STOP_ALL__', combo });
+                    await update('stop_all_hotkey', combo);
+                     } catch (err) {
+                    alert(`Failed to register hotkey: ${err}`);
+                        }
+                           }}
+                         />
+                      {config.stop_all_hotkey && (
+                     <button
+                      style={{ background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: '4px' }}
+                          onClick={async () => {
+                      try {
+                             await invoke('unregister_hotkey', { soundId: '__STOP_ALL__' });
+                           } catch (err) {
+                        console.error('Failed to unregister stop-all hotkey', err);
+                    }
+                         update('stop_all_hotkey', null);
+                        }}
+                         title="Clear hotkey"
+                    >
+                       <i className="ti ti-x"></i>
+                           </button>
+                        )}
+                      </div>
                         </div>
-                    </div>
-
-                </div>
+                       </div>
+                       <div className="settings-section-title">About</div>
+<div className="settings-group">
+    <div className="settings-row" style={{ alignItems: 'flex-start' }}>
+        <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>WaveKey</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontFamily: 'ui-monospace, monospace' }}>
+                    v{appVersion || '—'}
+                </span>
             </div>
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                A lightweight local soundboard for clips, hotkeys, and quick playback.
+            </span>
         </div>
+    </div>
+
+    <div className="settings-row" style={{ borderBottom: 'none' }}>
+        <div style={{ display: 'flex', gap: '16px' }}>
+            <span
+                className="settings-label"
+                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={() => shellOpen('https://github.com/odqin/WaveKey')}
+            >
+                GitHub <i className="ti ti-external-link" style={{ fontSize: '12px' }}></i>
+            </span>
+            <span
+                className="settings-label"
+                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={() => shellOpen('https://github.com/odqin/WaveKey/issues/new')}
+            >
+                Report an issue <i className="ti ti-external-link" style={{ fontSize: '12px' }}></i>
+            </span>
+        </div>
+        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>© 2026 WaveKey</span>
+    </div>
+</div>
+                        </div>
+
+                 </div>
+                 
     );
 }

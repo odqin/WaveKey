@@ -16,18 +16,21 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Manager, RunEvent, WindowEvent,
 };
-
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())   // add this
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
         ))
-        .manage(audio::init_audio_engine())
         .manage(hotkeys::init_hotkey_manager())
         .manage(virtual_device::init())
         .setup(|app| {
+            // Audio engine needs an AppHandle to emit events, so it's set up here
+            // instead of via .manage() above.
+            app.manage(audio::init_audio_engine(app.handle().clone()));
+
             // Register hotkeys from persisted config
             hotkeys::spawn_hotkey_listener(app.handle().clone());
             hotkeys::register_all_from_config(app.handle());
@@ -51,7 +54,6 @@ fn main() {
                     _ => {}
                 })
                 .on_tray_icon_event(|tray, event| {
-                    // Left-click on tray icon toggles the window
                     if let TrayIconEvent::Click {
                         button: MouseButton::Left,
                         button_state: MouseButtonState::Up,
@@ -76,6 +78,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             audio::play_sound,
             audio::stop_all_audio,
+                audio::set_volume, // NEW
+
             config::get_config,
             config::save_config,
             hotkeys::register_hotkey,
@@ -90,7 +94,6 @@ fn main() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app_handle, event| match event {
-            // Intercept window close: if minimize_to_tray is enabled, hide instead.
             RunEvent::WindowEvent {
                 label,
                 event: WindowEvent::CloseRequested { api, .. },
