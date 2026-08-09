@@ -2,7 +2,7 @@
 
 > A fast, cross-platform desktop soundboard built with Tauri 2, Rust, and React.
 
-![WaveKey Screenshot](https://via.placeholder.com/900x500.png?text=WaveKey+Screenshot)
+![WaveKey Banner](./assets/banner.png)
 
 ---
 
