@@ -1,6 +1,6 @@
 {
   "productName": "WaveKey",
-  "version": "0.1.3",
+  "version": "0.1.3=4",
   "identifier": "com.odqin.wavekey",
   "build": {
     "beforeDevCommand": "npm run dev",
